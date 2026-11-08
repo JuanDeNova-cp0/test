@@ -26,25 +26,25 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
 
   return (
     <>
-      {/* French Tricolor Accent Bar */}
-      <div className="h-1 w-full bg-gradient-to-r from-[#002654] via-white to-[#ED2939] shadow-sm"></div>
-
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-stone-200/70 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 md:h-20">
+          <div className="flex justify-between items-center h-[72px] md:h-[84px]">
             {/* Brand Logo */}
             <div
               onClick={() => handleNavClick('home')}
-              className="flex items-center gap-3 cursor-pointer group select-none"
+              className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group select-none"
             >
-              <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-gradient-to-br from-[#173a8a] via-[#293b86] to-[#d44b62] flex items-center justify-center text-white text-lg md:text-xl font-bold shadow-lg shadow-blue-900/15 group-hover:scale-105 transition-transform">
-                🥐
+              <div className="relative grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-[15px] bg-[#172033] shadow-[0_10px_24px_-12px_rgba(23,32,51,0.55)] ring-1 ring-[#172033]/10 transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_14px_28px_-12px_rgba(190,24,93,0.38)] sm:h-12 sm:w-12 sm:rounded-[17px]">
+                <div className="absolute -right-2 -top-2 h-7 w-7 rounded-full bg-[#BE185D]/90 blur-[7px]" />
+                <span className="relative font-serif text-[21px] font-semibold tracking-[-0.08em] text-white sm:text-[23px]">
+                L<span className="text-[#E8A5BA]">F</span>
+                </span>
               </div>
               <div className="flex flex-col">
-                <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-slate-900 group-hover:text-blue-900 transition-colors">
-                Lumière <span className="text-rose-600 italic">French</span>
+                <span className="font-serif text-[21px] sm:text-[25px] leading-none font-semibold tracking-[-0.02em] text-[#172033] transition-colors group-hover:text-[#415991]">
+                Lumière <span className="italic text-[#BE185D]">French</span>
                 </span>
-                <span className="text-[11px] font-medium uppercase tracking-widest text-slate-600">
+                <span className="mt-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.19em] text-slate-500">
                   Học tiếng Pháp thông minh
                 </span>
               </div>

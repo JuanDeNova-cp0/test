@@ -1,300 +1,301 @@
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
-import { MOT_DU_JOUR } from '../data/frenchData';
-import { AudioPlayerButton } from '../components/AudioPlayerButton';
-import { 
-  Sparkles, 
-  BookOpen, 
-  Layers, 
-  HelpCircle, 
-  ArrowRight, 
-  Flame, 
-  Award, 
-  Compass, 
-  CheckCircle2, 
-  Coffee, 
-  Headphones 
+import React, { useState } from 'react';
+import {
+  ArrowRight,
+  Bookmark,
+  Check,
+  CircleHelp,
+  Flame,
+  Languages,
+  LockKeyhole,
+  Mic,
+  Play,
+  Sparkles,
+  Volume2
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { playFrenchAudio } from '../utils/audio';
 
 interface HomePageProps {
   onNavigate: (tab: string) => void;
 }
 
+const roadmap = [
+  { title: 'Les salutations', meta: 'A1 · Terminé', state: 'done' },
+  { title: 'Le présent simple', meta: 'A1 · Terminé', state: 'done' },
+  { title: 'Le passé composé', meta: 'A1 · Leçon actuelle', state: 'current' },
+  { title: 'Les voyages', meta: 'A2 · À débloquer', state: 'locked' }
+] as const;
+
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, addXP } = useAuth();
+  const [translation, setTranslation] = useState<'fr' | 'vi'>('vi');
+  const [saved, setSaved] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [quizChoice, setQuizChoice] = useState<string | null>(null);
+  const firstName = user?.name?.split(' ')[0] || 'Alex';
+  const isCorrect = quizChoice === 'sommes allés';
+
+  const playWord = () => {
+    setAudioPlaying(true);
+    playFrenchAudio('éphémère', () => setAudioPlaying(false));
+  };
+
+  const toggleRecording = () => {
+    setRecording((current) => !current);
+  };
+
+  const chooseQuiz = (choice: string) => {
+    setQuizChoice(choice);
+    if (choice === 'sommes allés') addXP(10);
+  };
 
   return (
-    <div className="space-y-12 pb-16">
-      
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#FAF6F0] to-white border-b border-stone-200/60 pt-12 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200/70 text-rose-700 text-xs font-bold shadow-2xs">
-              <span className="text-base">🇫🇷</span>
-              <span>Khởi đầu hành trình tiếng Pháp chuẩn CEFR</span>
-            </div>
-
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.15]">
-              Học tiếng Pháp tự nhiên & thanh lịch như một <span className="text-rose-600 italic">Parisien</span>
-            </h1>
-
-            <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-2xl">
-              Chinh phục phát âm chuẩn xác, làm chủ ngữ pháp tinh tế và tự tin giao tiếp qua các bài học tình huống thực tế, bộ thẻ Flashcard thông minh cùng hội thoại đời thường tại Paris.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <button
-                onClick={() => onNavigate('lessons')}
-                className="px-6 py-3.5 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm shadow-md shadow-blue-900/20 active:scale-95 transition-all flex items-center gap-2.5 cursor-pointer"
-              >
-                <BookOpen size={18} />
-                <span>Bắt đầu bài học ngay</span>
-                <ArrowRight size={16} />
-              </button>
-
-              <button
-                onClick={() => onNavigate('flashcards')}
-                className="px-6 py-3.5 rounded-2xl bg-white hover:bg-stone-50 text-slate-800 font-bold text-sm border border-stone-300 shadow-2xs active:scale-95 transition-all flex items-center gap-2.5 cursor-pointer"
-              >
-                <Layers size={18} className="text-rose-600" />
-                <span>Luyện thẻ Flashcards</span>
-              </button>
-            </div>
-
-            {/* Quick stats ribbon */}
-            <div className="grid grid-cols-3 gap-6 pt-6 border-t border-stone-200/70 max-w-lg">
-              <div>
-                <p className="font-serif text-2xl font-bold text-slate-900">1,500+</p>
-                <p className="text-xs text-slate-600 font-medium">Từ vựng & Mẫu câu</p>
+    <div className="min-h-full bg-[#FAFAF9] pb-28 md:pb-16">
+      <div className="mx-auto max-w-[1480px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        {/* Welcome banner */}
+        <section className="relative mb-5 overflow-hidden rounded-[28px] bg-[#172033] px-5 py-7 text-white shadow-[0_18px_50px_-20px_rgba(15,23,42,.45)] sm:px-8 sm:py-8 lg:px-10">
+          <div className="absolute -right-24 -top-28 h-72 w-72 rounded-full border-[48px] border-white/[0.035]" />
+          <div className="absolute bottom-[-110px] right-20 h-52 w-52 rounded-full bg-[#7c8fbd]/10 blur-2xl" />
+          <div className="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#C9D3EA]">
+                <Sparkles size={14} className="text-[#D5BBA6]" />
+                Session du jour
               </div>
-              <div>
-                <p className="font-serif text-2xl font-bold text-slate-900">A1 - B2</p>
-                <p className="text-xs text-slate-600 font-medium">Khung chuẩn Châu Âu</p>
-              </div>
-              <div>
-                <p className="font-serif text-2xl font-bold text-slate-900">100%</p>
-                <p className="text-xs text-slate-600 font-medium">Phát âm giọng Paris</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Banner Showcase: Mot du Jour + Quick widget */}
-          <div className="lg:col-span-5 space-y-5">
-            {/* Mot du Jour (Word of the Day Card) */}
-            <div className="bg-white rounded-3xl p-6 shadow-xl border border-stone-200/90 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-100/60 rounded-full blur-2xl pointer-events-none"></div>
-
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900">
-                  ✨ Mot du jour • Từ vựng hôm nay
-                </span>
-                <span className="text-xs font-semibold text-slate-600">Trình độ B1</span>
-              </div>
-
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="font-serif text-3xl font-bold text-slate-900">
-                    {MOT_DU_JOUR.french}
-                  </h3>
-                  <div className="flex items-center gap-2 text-xs text-slate-600 mt-1">
-                    <span className="font-mono text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md font-medium">
-                      {MOT_DU_JOUR.phonetic}
-                    </span>
-                    <span>• {MOT_DU_JOUR.gender}</span>
-                  </div>
-                </div>
-
-                <AudioPlayerButton text={MOT_DU_JOUR.french} size="lg" />
-              </div>
-
-              <p className="mt-4 text-sm font-semibold text-slate-800">
-                {MOT_DU_JOUR.vietnamese}
-              </p>
-
-              <div className="mt-4 p-3.5 bg-stone-50 rounded-2xl border border-stone-100 text-xs space-y-1">
-                <div className="flex items-center justify-between">
-                  <p className="font-serif italic font-medium text-slate-800">
-                    « {MOT_DU_JOUR.exampleFrench} »
-                  </p>
-                  <AudioPlayerButton text={MOT_DU_JOUR.exampleFrench} size="sm" />
-                </div>
-                <p className="text-slate-600">
-                  {MOT_DU_JOUR.exampleVietnamese}
+              <h1 className="font-serif text-[2rem] font-semibold leading-tight sm:text-4xl">
+                Bonjour, {firstName} !
+              </h1>
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <p className="font-serif text-lg italic text-[#E4E0DA]">
+                  {translation === 'fr'
+                    ? 'Petit à petit, l’oiseau fait son nid.'
+                    : 'Từng bước nhỏ, chim làm tổ của mình.'}
                 </p>
+                <button
+                  onClick={() => setTranslation((current) => current === 'fr' ? 'vi' : 'fr')}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/15"
+                  title="Changer la traduction"
+                >
+                  <Languages size={13} />
+                  {translation === 'fr' ? 'Français' : 'Tiếng Việt'}
+                </button>
               </div>
             </div>
 
-            {/* Quick Continue Card */}
-            {isAuthenticated && user && (
-              <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-3xl p-6 shadow-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-12 h-12 rounded-full border-2 border-white/60 object-cover"
-                    />
-                    <div>
-                      <p className="text-xs text-blue-200">Chào mừng trở lại,</p>
-                      <p className="font-bold text-base">{user.name}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-amber-300 font-bold flex items-center gap-1 justify-end">
-                      <Flame size={14} className="fill-amber-300" />
-                      {user.streakDays} ngày liên tiếp
-                    </p>
-                    <p className="text-xs text-blue-200">{user.xp} XP tích lũy</p>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] text-blue-200 uppercase font-semibold">Bài học đề xuất</p>
-                    <p className="text-xs font-bold text-white">1. Nhập môn & Chào hỏi chuẩn Paris</p>
-                  </div>
-                  <button
-                    onClick={() => onNavigate('lessons')}
-                    className="px-3.5 py-1.5 rounded-xl bg-white text-blue-950 font-bold text-xs hover:bg-blue-50 transition-colors"
-                  >
-                    Học tiếp
-                  </button>
-                </div>
+            <button
+              onClick={() => onNavigate('lessons')}
+              className="group flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.08] p-3 pr-4 text-left backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/[0.12] lg:w-[360px]"
+            >
+              <div className="relative grid h-16 w-16 shrink-0 place-items-center rounded-full bg-white text-[#172033]">
+                <svg viewBox="0 0 44 44" className="absolute inset-1 -rotate-90">
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#E2E8F0" strokeWidth="4" />
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#BE185D" strokeWidth="4" strokeLinecap="round" strokeDasharray="113" strokeDashoffset="40" />
+                </svg>
+                <span className="relative text-sm font-extrabold">65%</span>
               </div>
-            )}
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#AAB6CD]">Reprendre</p>
+                <p className="mt-1 truncate font-serif text-lg font-semibold">Le Passé Composé</p>
+                <p className="mt-1 text-xs text-[#C9D3EA]">4 minutes restantes</p>
+              </div>
+              <ArrowRight size={18} className="shrink-0 text-[#C9D3EA] transition-transform group-hover:translate-x-1" />
+            </button>
           </div>
+        </section>
 
-        </div>
-      </section>
-
-      {/* Main Feature Cards */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="font-serif text-3xl font-bold text-slate-900">
-            Học toàn diện 4 kỹ năng tiếng Pháp
-          </h2>
-          <p className="text-sm text-slate-600 mt-2">
-            Phương pháp học tập hiện đại kết hợp lý thuyết tinh gọn và thực hành tương tác ngay lập tức
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Card 1 */}
-          <div
-            onClick={() => onNavigate('lessons')}
-            className="group bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs hover:shadow-xl hover:border-blue-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-          >
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
-                📚
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+          {/* Word of the day */}
+          <section className="rounded-[24px] border border-slate-200/70 bg-white p-5 shadow-sm transition hover:border-[#C7D2FE] hover:shadow-md sm:p-7 lg:col-span-5 lg:min-h-[330px]">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#9A6B52]">Mot du jour</p>
+                <p className="mt-1 text-sm text-slate-500">Niveau B1 · Culture</p>
               </div>
-              <h3 className="font-serif text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
-                Khóa học & Ngữ pháp
-              </h3>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Các bài học ngắn gọn từ A1 đến B2, phân tích cấu trúc câu và mẹo nhớ chia động từ bất quy tắc.
-              </p>
-            </div>
-            <div className="mt-6 flex items-center text-xs font-bold text-blue-700 gap-1.5 group-hover:translate-x-1 transition-transform">
-              <span>Xem giáo trình</span>
-              <ArrowRight size={14} />
-            </div>
-          </div>
-
-          {/* Card 2 */}
-          <div
-            onClick={() => onNavigate('flashcards')}
-            className="group bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs hover:shadow-xl hover:border-rose-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-          >
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-700 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
-                🃏
-              </div>
-              <h3 className="font-serif text-lg font-bold text-slate-900 group-hover:text-rose-700 transition-colors">
-                Flashcards 3D thông minh
-              </h3>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Lật thẻ lặp lại ngắt quãng (Spaced Repetition), nghe âm thanh chuẩn từng từ và ví dụ thực tế.
-              </p>
-            </div>
-            <div className="mt-6 flex items-center text-xs font-bold text-rose-600 gap-1.5 group-hover:translate-x-1 transition-transform">
-              <span>Luyện 10 thẻ ngay</span>
-              <ArrowRight size={14} />
-            </div>
-          </div>
-
-          {/* Card 3 */}
-          <div
-            onClick={() => onNavigate('quiz')}
-            className="group bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs hover:shadow-xl hover:border-amber-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-          >
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
-                🎯
-              </div>
-              <h3 className="font-serif text-lg font-bold text-slate-900 group-hover:text-amber-700 transition-colors">
-                Đố vui & Thi thử
-              </h3>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Kiểm tra kiến thức với các câu hỏi trắc nghiệm thực tế, giải thích chi tiết và nhận điểm kinh nghiệm XP.
-              </p>
-            </div>
-            <div className="mt-6 flex items-center text-xs font-bold text-amber-700 gap-1.5 group-hover:translate-x-1 transition-transform">
-              <span>Bắt đầu thi thử</span>
-              <ArrowRight size={14} />
-            </div>
-          </div>
-
-          {/* Card 4 */}
-          <div
-            onClick={() => onNavigate('dialogue')}
-            className="group bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs hover:shadow-xl hover:border-emerald-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-          >
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-transform">
-                ☕
-              </div>
-              <h3 className="font-serif text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
-                Hội thoại Đời sống Paris
-              </h3>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Thực hành các kịch bản thực tế: Gọi món tại quán cà phê, hỏi đường tới bảo tàng, mua sắm bánh mì.
-              </p>
-            </div>
-            <div className="mt-6 flex items-center text-xs font-bold text-emerald-700 gap-1.5 group-hover:translate-x-1 transition-transform">
-              <span>Vào kịch bản</span>
-              <ArrowRight size={14} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Culture & Motivational Quote Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-stone-900 via-slate-900 to-blue-950 rounded-3xl p-8 sm:p-12 text-white text-center relative overflow-hidden shadow-2xl">
-          <div className="max-w-3xl mx-auto space-y-4">
-            <span className="text-3xl">🥖 🗼 🍷</span>
-            <p className="font-serif text-2xl sm:text-3xl italic font-semibold leading-relaxed text-blue-100">
-              « Une langue différente est une vision différente de la vie. »
-            </p>
-            <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold">
-              — Federico Fellini (Một ngôn ngữ mới là một thế giới quan mới về cuộc đời)
-            </p>
-            <div className="pt-4">
               <button
-                onClick={() => onNavigate(isAuthenticated ? 'lessons' : 'register')}
-                className="px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-rose-900/40 transition-all cursor-pointer"
+                onClick={() => setSaved((current) => !current)}
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition hover:-translate-y-0.5 ${
+                  saved ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-slate-200 text-slate-500 hover:border-rose-200 hover:text-rose-700'
+                }`}
+                title="Ajouter au vocabulaire"
               >
-                {isAuthenticated ? 'Vào học ngay hôm nay' : 'Đăng ký tài khoản miễn phí'}
+                <Bookmark size={18} fill={saved ? 'currentColor' : 'none'} />
               </button>
             </div>
-          </div>
-        </div>
-      </section>
 
+            <div className="mt-7 flex items-end justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3">
+                  <h2 className="font-serif text-4xl font-semibold text-[#172033] sm:text-5xl">Éphémère</h2>
+                  <span className="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">féminin</span>
+                </div>
+                <p className="mt-2 font-mono text-sm text-slate-500">/e.fe.mɛʁ/ <span className="text-slate-400">· adjectif</span></p>
+              </div>
+              <button
+                onClick={playWord}
+                className={`relative grid h-14 w-14 shrink-0 place-items-center rounded-full transition ${
+                  audioPlaying ? 'bg-[#BE185D] text-white shadow-lg shadow-rose-200' : 'bg-[#F1F4F9] text-[#1E293B] hover:bg-[#E8ECF5]'
+                }`}
+                title="Écouter"
+              >
+                {audioPlaying && <span className="absolute inset-0 animate-ping rounded-full border border-rose-300 opacity-50" />}
+                <Volume2 size={22} />
+              </button>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-slate-100 bg-[#F7F7F5] px-4 py-4">
+              <p className="font-serif text-lg leading-relaxed text-slate-700">
+                La beauté <span className="text-rose-700 underline decoration-rose-200 decoration-2 underline-offset-4">éphémère</span> d’un coucher de soleil parisien.
+              </p>
+              <p className="mt-2 text-xs text-slate-500">Vẻ đẹp thoáng qua của hoàng hôn Paris.</p>
+            </div>
+          </section>
+
+          {/* Roadmap */}
+          <section className="rounded-[24px] border border-slate-200/70 bg-white p-5 shadow-sm transition hover:border-[#C7D2FE] hover:shadow-md sm:p-7 lg:col-span-4 lg:min-h-[330px]">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#435A8E]">Le sentier</p>
+                <h2 className="mt-1 font-serif text-2xl font-semibold text-[#172033]">Votre parcours</h2>
+              </div>
+              <span className="rounded-full bg-[#EEF2FF] px-3 py-1 text-xs font-bold text-[#415991]">A1 · 68%</span>
+            </div>
+
+            <div className="relative mt-6 space-y-0">
+              {roadmap.map((step, index) => (
+                <button
+                  key={step.title}
+                  onClick={() => step.state !== 'locked' && onNavigate('lessons')}
+                  className="group relative flex w-full items-start gap-3 pb-5 text-left"
+                >
+                  {index < roadmap.length - 1 && (
+                    <span className={`absolute left-[19px] top-10 h-[calc(100%-32px)] w-px ${step.state === 'done' ? 'bg-[#A3B2D8]' : 'bg-slate-200'}`} />
+                  )}
+                  <span className={`relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 ${
+                    step.state === 'done' ? 'border-[#9AA9CD] bg-[#EEF2FF] text-[#415991]' :
+                    step.state === 'current' ? 'border-[#BE185D] bg-[#BE185D] text-white shadow-[0_0_0_7px_rgba(190,24,93,.10)]' :
+                    'border-slate-200 bg-slate-50 text-slate-400'
+                  }`}>
+                    {step.state === 'done' ? <Check size={17} /> : step.state === 'locked' ? <LockKeyhole size={15} /> : <Play size={15} fill="currentColor" />}
+                  </span>
+                  <span className="min-w-0 pt-0.5">
+                    <span className={`block font-semibold transition ${step.state === 'locked' ? 'text-slate-400' : 'text-slate-800 group-hover:text-[#415991]'}`}>{step.title}</span>
+                    <span className={`mt-1 block text-xs ${step.state === 'current' ? 'font-bold text-[#BE185D]' : 'text-slate-500'}`}>{step.meta}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* Pronunciation studio */}
+          <section className="relative overflow-hidden rounded-[24px] border border-slate-200/70 bg-[#EEF2FF] p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-7 lg:col-span-3 lg:min-h-[330px]">
+            <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-white/70 blur-2xl" />
+            <div className="relative">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#526899]">Atelier oral</p>
+              <h2 className="mt-1 font-serif text-2xl font-semibold text-[#172033]">Le son /ʁ/</h2>
+              <div className="mt-6 rounded-2xl border border-white/80 bg-white/75 px-4 py-4 backdrop-blur">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-slate-700">Précision</span>
+                  <span className="font-serif text-2xl font-bold text-[#415991]">94%</span>
+                </div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div className="h-full w-[94%] rounded-full bg-gradient-to-r from-[#687DAE] to-[#2E4D82]" />
+                </div>
+              </div>
+
+              <div className="mt-5 flex items-center justify-between">
+                <button
+                  onClick={playWord}
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2.5 text-xs font-bold text-[#415991] shadow-sm transition hover:-translate-y-0.5"
+                >
+                  <Volume2 size={16} />
+                  Modèle
+                </button>
+                <button
+                  onClick={toggleRecording}
+                  className={`relative grid h-16 w-16 place-items-center rounded-full text-white shadow-lg transition hover:scale-[1.03] ${
+                    recording ? 'bg-rose-600 shadow-rose-200' : 'bg-[#172033] shadow-slate-300'
+                  }`}
+                  title={recording ? 'Arrêter l’enregistrement' : 'Commencer l’enregistrement'}
+                >
+                  {recording && <span className="absolute inset-0 animate-ping rounded-full bg-rose-400 opacity-30" />}
+                  <Mic size={23} className="relative" />
+                </button>
+              </div>
+              <p className="mt-4 text-center text-xs font-semibold text-[#526899]">
+                {recording ? 'J’écoute votre prononciation…' : 'Touchez pour enregistrer'}
+              </p>
+            </div>
+          </section>
+
+          {/* Conjugation quiz */}
+          <section className="rounded-[24px] border border-slate-200/70 bg-white p-5 shadow-sm transition hover:border-[#D8B4C7] hover:shadow-md sm:p-7 lg:col-span-7">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#9A6B52]">Quiz express · 30 sec</p>
+                <h2 className="mt-1 font-serif text-2xl font-semibold text-[#172033]">Complétez la phrase</h2>
+              </div>
+              <button className="rounded-full border border-slate-200 p-2 text-slate-400 transition hover:border-slate-300 hover:text-slate-700" title="Conseil">
+                <CircleHelp size={17} />
+              </button>
+            </div>
+
+            <div className="mt-5 rounded-2xl bg-[#F7F7F5] px-4 py-5 text-center sm:px-6">
+              <p className="font-serif text-xl text-slate-800 sm:text-2xl">
+                Hier, nous <span className="inline-block min-w-20 border-b-2 border-dashed border-[#BE185D] px-2 pb-1 font-bold text-[#BE185D]">
+                  {quizChoice || '___'}
+                </span> au musée.
+              </p>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              {['avons été', 'ai été', 'sommes allés', 'êtes allés'].map((choice) => {
+                const selected = quizChoice === choice;
+                const correct = choice === 'sommes allés';
+                return (
+                  <button
+                    key={choice}
+                    onClick={() => chooseQuiz(choice)}
+                    className={`rounded-xl border px-4 py-3 text-sm font-bold transition hover:-translate-y-0.5 ${
+                      selected && (choice === 'sommes allés')
+                        ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                        : selected && !correct
+                          ? 'border-rose-200 bg-rose-50 text-rose-700'
+                          : 'border-slate-200 bg-white text-slate-700 hover:border-[#A8B5D4] hover:text-[#415991]'
+                    }`}
+                  >
+                    {choice}
+                  </button>
+                );
+              })}
+            </div>
+            {quizChoice && (
+              <p className={`mt-4 text-center text-sm font-semibold ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
+                {isCorrect ? 'Très bien ! « Nous sommes allés » — +10 XP' : 'Presque ! Pour « nous », on dit « sommes allés ».'}
+              </p>
+            )}
+          </section>
+
+          {/* Daily goal */}
+          <section className="rounded-[24px] border border-slate-200/70 bg-[#F7F4EF] p-5 shadow-sm lg:col-span-5">
+            <div className="flex h-full items-center justify-between gap-5">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#9A6B52]">Objectif quotidien</p>
+                <h2 className="mt-1 font-serif text-2xl font-semibold text-[#172033]">11 / 15 minutes</h2>
+                <p className="mt-2 text-sm text-slate-500">Encore 4 minutes pour conserver votre série.</p>
+              </div>
+              <div className="relative grid h-24 w-24 shrink-0 place-items-center rounded-full bg-white shadow-sm">
+                <svg viewBox="0 0 44 44" className="absolute h-20 w-20 -rotate-90">
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#E7E5E4" strokeWidth="4" />
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#C2410C" strokeWidth="4" strokeLinecap="round" strokeDasharray="113" strokeDashoffset="30" />
+                </svg>
+                <Flame size={28} className="relative fill-[#C2410C] text-[#C2410C]" />
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   );
 };

@@ -13,11 +13,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const navItems = [
-    { id: 'home', label: 'Khám phá', icon: Sparkles },
-    { id: 'lessons', label: 'Khóa học', icon: BookOpen },
-    { id: 'flashcards', label: 'Từ vựng (Flashcards)', icon: Layers },
-    { id: 'quiz', label: 'Luyện đề & Đố vui', icon: HelpCircle },
-    { id: 'dialogue', label: 'Hội thoại Paris', icon: MessageSquare },
+    { id: 'lessons', label: 'Parcours', icon: BookOpen },
+    { id: 'dialogue', label: 'Atelier Oral', icon: MessageSquare },
+    { id: 'lessons', label: 'Grammaire', icon: HelpCircle },
+    { id: 'flashcards', label: 'Communauté', icon: Layers },
   ];
 
   const handleNavClick = (id: string) => {
@@ -30,20 +29,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
       {/* French Tricolor Accent Bar */}
       <div className="h-1 w-full bg-gradient-to-r from-[#002654] via-white to-[#ED2939] shadow-sm"></div>
 
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200/70 transition-all duration-300">
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-stone-200/70 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-16 md:h-20">
             {/* Brand Logo */}
             <div
               onClick={() => handleNavClick('home')}
               className="flex items-center gap-3 cursor-pointer group select-none"
             >
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-700 via-indigo-800 to-rose-600 flex items-center justify-center text-white text-xl font-bold shadow-md shadow-blue-900/10 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-gradient-to-br from-[#173a8a] via-[#293b86] to-[#d44b62] flex items-center justify-center text-white text-lg md:text-xl font-bold shadow-lg shadow-blue-900/15 group-hover:scale-105 transition-transform">
                 🥐
               </div>
               <div className="flex flex-col">
-                <span className="font-serif text-2xl font-bold tracking-tight text-slate-900 group-hover:text-blue-900 transition-colors">
-                  Bonjour <span className="text-rose-600 italic">Français</span>
+                <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-slate-900 group-hover:text-blue-900 transition-colors">
+                Lumière <span className="text-rose-600 italic">French</span>
                 </span>
                 <span className="text-[11px] font-medium uppercase tracking-widest text-slate-600">
                   Học tiếng Pháp thông minh
@@ -58,7 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
                 const isActive = currentTab === item.id;
                 return (
                   <button
-                    key={item.id}
+                    key={`${item.id}-${item.label}`}
                     onClick={() => handleNavClick(item.id)}
                     className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
                       isActive
@@ -238,6 +237,31 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, setCurrentTab }) => 
           </div>
         )}
       </nav>
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200/80 bg-white/95 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl md:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-4">
+          {[
+            { id: 'home', label: 'Accueil', icon: Sparkles },
+            { id: 'lessons', label: 'Parcours', icon: BookOpen },
+            { id: 'dialogue', label: 'Oral', icon: MessageSquare },
+            { id: 'profile', label: 'Profil', icon: UserIcon }
+          ].map((item) => {
+            const Icon = item.icon;
+            const isActive = currentTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`flex flex-col items-center gap-1 rounded-xl py-1 text-[10px] font-bold transition ${
+                  isActive ? 'text-[#415991]' : 'text-slate-400'
+                }`}
+              >
+                <Icon size={19} fill={isActive ? 'currentColor' : 'none'} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </>
   );
 };

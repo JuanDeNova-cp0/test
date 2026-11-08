@@ -1,4 +1,4 @@
-# 🥐 Bonjour Français - Nền Tảng Học Tiếng Pháp Tương Tác Thông Minh
+# Lumière French - Nền Tảng Học Tiếng Pháp
 
 Ứng dụng web học tiếng Pháp hiện đại với giao diện thanh lịch mang đậm phong cách Parisienne, tích hợp phương pháp phản xạ âm thanh, flashcards 3D, thi thử trắc nghiệm và hội thoại đời thực.
 
